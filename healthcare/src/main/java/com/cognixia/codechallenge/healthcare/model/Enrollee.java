@@ -32,19 +32,17 @@ public class Enrollee {
 		super();
 	}
 
-	public Enrollee(Integer enrolleeId, String enrolleeName, Boolean activationStatus, LocalDate enrolleeBirthDate) {
+	public Enrollee(String enrolleeName, Boolean activationStatus, LocalDate enrolleeBirthDate) {
 		super();
-		this.enrolleeId = enrolleeId;
 		this.enrolleeName = enrolleeName;
 		this.phoneNumber = "Not given";
 		this.activationStatus = activationStatus;
 		this.enrolleeBirthDate = enrolleeBirthDate;
 	}
 
-	public Enrollee(Integer enrolleeId, String enrolleeName, String phoneNumber, Boolean activationStatus,
+	public Enrollee(String enrolleeName, String phoneNumber, Boolean activationStatus,
 			LocalDate enrolleeBirthDate) {
 		super();
-		this.enrolleeId = enrolleeId;
 		this.enrolleeName = enrolleeName;
 		this.phoneNumber = phoneNumber;
 		this.activationStatus = activationStatus;

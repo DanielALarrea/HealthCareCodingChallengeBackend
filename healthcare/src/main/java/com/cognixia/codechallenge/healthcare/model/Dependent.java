@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity(name = "dependent")
@@ -24,18 +25,18 @@ public class Dependent {
 	private LocalDate dependentBirthDate;
 	
 	@ManyToOne(targetEntity = Enrollee.class)
-	private Enrollee enrollee;
+	@JoinColumn(name = "enrollee_id")
+	private Integer enrolleeId;
 
 	public Dependent() {
 		super();
 	}
 
-	public Dependent(Integer dependentId, String dependentName, LocalDate dependentBirthDate, Enrollee enrollee) {
+	public Dependent(String dependentName, LocalDate dependentBirthDate, Integer enrolleeId) {
 		super();
-		this.dependentId = dependentId;
 		this.dependentName = dependentName;
 		this.dependentBirthDate = dependentBirthDate;
-		this.enrollee = enrollee;
+		this.enrolleeId = enrolleeId;
 	}
 
 	public Integer getDependentId() {
@@ -62,18 +63,12 @@ public class Dependent {
 		this.dependentBirthDate = dependentBirthDate;
 	}
 
-	public Enrollee getEnrollee() {
-		return enrollee;
+	public Integer getEnrolleeId() {
+		return enrolleeId;
 	}
 
-	public void setEnrollee(Enrollee enrollee) {
-		this.enrollee = enrollee;
+	public void setEnrolleeId(Integer enrolleeId) {
+		this.enrolleeId = enrolleeId;
 	}
 
-	@Override
-	public String toString() {
-		return "Dependent [dependentId=" + dependentId + ", dependentName=" + dependentName + ", dependentBirthDate="
-				+ dependentBirthDate + ", enrollee=" + enrollee + "]";
-	}
-	
 }
