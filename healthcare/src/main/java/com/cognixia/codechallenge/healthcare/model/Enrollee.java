@@ -13,7 +13,7 @@ public class Enrollee {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(nullable = false)
+	@Column(unique = true, nullable = false)
 	private Integer enrolleeId;
 	
 	@Column(nullable = false)

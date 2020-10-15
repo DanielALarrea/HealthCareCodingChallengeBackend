@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cognixia.codechallenge.healthcare.model.Dependent;
 import com.cognixia.codechallenge.healthcare.model.Enrollee;
 import com.cognixia.codechallenge.healthcare.repository.EnrolleeRepository;
 
@@ -14,17 +15,12 @@ public class EnrolleeService {
 
 	@Autowired
 	private EnrolleeRepository enrolleeRepo;
+	@Autowired
+	private DependentService dependentService;
 	
 	// Create
-	public boolean addNewEnrollee(String name, String phoneNumber, boolean activationStatus, LocalDate birthDate) {
-		String phoneNumToPass = "";
-		if(phoneNumber == "") {
-			phoneNumToPass = "Not given";
-		} else {
-			phoneNumToPass = phoneNumber;
-		}
-		
-		Enrollee enrollee = new Enrollee(name, phoneNumToPass, activationStatus, birthDate);
+	public boolean addNewEnrollee(String name, String phoneNumber, boolean activationStatus, LocalDate birthDate) {		
+		Enrollee enrollee = new Enrollee(name, phoneNumber, activationStatus, birthDate);
 		enrolleeRepo.save(enrollee);
 		
 		return true;
@@ -64,9 +60,9 @@ public class EnrolleeService {
 		return true;
 	}
 	
-	public boolean updateEnrolleeBirthDate(Integer id, String birthDateString) {
+	public boolean updateEnrolleeBirthDate(Integer id, String birthDate) {
 		Enrollee enrolleeToUpdate = getEnrolleeById(id);
-		enrolleeToUpdate.setEnrolleeBirthDate(LocalDate.parse(birthDateString));
+		enrolleeToUpdate.setEnrolleeBirthDate(LocalDate.parse(birthDate));
 		enrolleeRepo.save(enrolleeToUpdate);
 		
 		return true;
@@ -74,9 +70,11 @@ public class EnrolleeService {
 	
 	// Delete
 	public boolean deleteEnrollee(Integer id) {
+		List<Dependent> enrolleeDependents = dependentService.getAllDependentsByEnrollee(id);
+		for(Dependent d: enrolleeDependents) {
+			dependentService.deleteDependent(d.getDependentId());
+		}
 		enrolleeRepo.deleteById(id);
-		// TODO: Logic for deleting dependents tied to enrollee
-		// Need to make logic for tying dependents to enrollees - in dependent service?
 		return true;
 	}
 }

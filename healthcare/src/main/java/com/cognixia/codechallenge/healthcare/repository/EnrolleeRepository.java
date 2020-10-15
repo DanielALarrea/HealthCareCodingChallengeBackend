@@ -7,5 +7,5 @@ import com.cognixia.codechallenge.healthcare.model.Enrollee;
 
 @Repository("enrolleeRepo")
 public interface EnrolleeRepository extends JpaRepository<Enrollee, Integer>{
-
+	
 }
