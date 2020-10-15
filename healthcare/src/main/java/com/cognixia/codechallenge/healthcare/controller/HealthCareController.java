@@ -19,6 +19,8 @@ import com.cognixia.codechallenge.healthcare.model.Dependent;
 import com.cognixia.codechallenge.healthcare.model.Enrollee;
 import com.cognixia.codechallenge.healthcare.service.DependentService;
 import com.cognixia.codechallenge.healthcare.service.EnrolleeService;
+import com.cognixia.codechallenge.healthcare.utility.ErrorUtil;
+import com.cognixia.codechallenge.healthcare.utility.SuccessUtil;
 
 @RestController
 public class HealthCareController {
@@ -52,54 +54,54 @@ public class HealthCareController {
 			phoneNumberOptional = "null";
 		}
 		if(enrolleeService.addNewEnrollee(name, phoneNumberOptional, activationStatus, LocalDate.parse(birthDate))) {
-			return new ResponseEntity<String>("Posted new enrollee", HttpStatus.CREATED);
+			return new ResponseEntity<String>(SuccessUtil.createdEnrollee(), HttpStatus.CREATED);
 		} else {
-			return new ResponseEntity<String>("Failed to post new enrollee", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorCreatingEnrollee(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PostMapping("/enrollee/update/name")
 	public ResponseEntity<String> updateEnrolleeName(@RequestParam Integer id, @RequestParam String name) {
 		if(enrolleeService.updateEnrolleeName(id, name)) {
-			return new ResponseEntity<String>("Updated enrollee name", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.updatedEnrolleeName(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to update enrollee info", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorUpdatingEnrollee(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PostMapping("/enrollee/update/phonenumber")
 	public ResponseEntity<String> updateEnrolleePhoneNumber(@RequestParam Integer id, @RequestParam String phoneNumber) {
 		if(enrolleeService.updateEnrolleePhoneNumber(id, phoneNumber)) {
-			return new ResponseEntity<String>("Updated enrollee phone number", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.updatedEnrolleePhoneNumber(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to update enrollee info", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorUpdatingEnrollee(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PostMapping("/enrollee/update/status")
 	public ResponseEntity<String> updateEnrolleeStatus(@RequestParam Integer id, @RequestParam boolean status) {
 		if(enrolleeService.updateEnrolleeStatus(id, status)) {
-			return new ResponseEntity<String>("Updated enrollee status", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.updatedEnrolleeStatus(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to update enrollee info", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorUpdatingEnrollee(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PostMapping("/enrollee/update/birthdate")
 	public ResponseEntity<String> updateEnrolleeBirthDate(@RequestParam Integer id, @RequestParam String birthDate) {
 		if(enrolleeService.updateEnrolleeBirthDate(id, birthDate)) {
-			return new ResponseEntity<String>("Updated enrollee birth date", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.updatedEnrolleeBirthDate(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to update enrollee info", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorUpdatingEnrollee(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@DeleteMapping("/enrollee/delete/{id}")
 	public ResponseEntity<String> deleteEnrollee(@PathVariable Integer id) {
 		if(enrolleeService.deleteEnrollee(id)) {
-			return new ResponseEntity<String>("Deleted enrollee and dependent(s)", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.deletedEnrollee(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to delete enrollee", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorDeletingEnrollee(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -124,36 +126,36 @@ public class HealthCareController {
 												  @RequestParam String birthDate,
 												  @RequestParam Integer enrolleeId) {
 		if(dependentService.addNewDependent(enrolleeService.getEnrolleeById(enrolleeId), name, LocalDate.parse(birthDate))) {
-			return new ResponseEntity<String>("Posted new dependent", HttpStatus.CREATED);
+			return new ResponseEntity<String>(SuccessUtil.createdDependent(), HttpStatus.CREATED);
 		} else {
-			return new ResponseEntity<String>("Failed to post new dependent", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorCreatingDependent(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PostMapping("/dependent/update/name")
 	public ResponseEntity<String> updateDependentName(@RequestParam Integer id, @RequestParam String name) {
 		if(dependentService.updateDependentName(id, name)) {
-			return new ResponseEntity<String>("Updated dependent name", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.updatedDependentName(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to update dependent info", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorUpdatingDependent(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PostMapping("/dependent/update/birthdate")
 	public ResponseEntity<String> updateDependentBirthDate(@RequestParam Integer id, @RequestParam String birthDate) {
 		if(dependentService.updateDependentBirthDate(id, birthDate)) {
-			return new ResponseEntity<String>("Updated dependent birth date", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.updatedDependentBirthDate(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to update dependent info", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorUpdatingDependent(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@DeleteMapping("/dependent/delete/{id}")
 	public ResponseEntity<String> deleteDependent(@PathVariable Integer id) {
 		if(dependentService.deleteDependent(id)) {
-			return new ResponseEntity<String>("Deleted dependent", HttpStatus.OK);
+			return new ResponseEntity<String>(SuccessUtil.deletedDependent(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Failed to delete dependent", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ErrorUtil.errorDeletingDependent(), HttpStatus.BAD_REQUEST);
 		}
 	}
 }
