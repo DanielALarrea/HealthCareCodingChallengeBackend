@@ -19,8 +19,8 @@ public class EnrolleeService {
 	private DependentService dependentService;
 	
 	// Create
-	public boolean addNewEnrollee(String name, String phoneNumber, boolean activationStatus, LocalDate birthDate) {		
-		Enrollee enrollee = new Enrollee(name, phoneNumber, activationStatus, birthDate);
+	public boolean addNewEnrollee(String name, String phoneNumber, boolean activationStatus, String birthDate) {		
+		Enrollee enrollee = new Enrollee(name, phoneNumber, activationStatus, LocalDate.parse(birthDate));
 		enrolleeRepo.save(enrollee);
 		
 		return true;

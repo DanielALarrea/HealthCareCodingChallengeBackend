@@ -2,7 +2,6 @@ package com.cognixia.codechallenge.healthcare.model;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity(name = "dependent")
 public class Dependent {
@@ -30,7 +26,6 @@ public class Dependent {
 	
 	@ManyToOne(targetEntity = Enrollee.class)
 	@JoinColumn(name = "enrollee_id")
-//	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Enrollee enrollee;
 
 	public Dependent() {

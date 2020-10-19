@@ -17,9 +17,8 @@ public class DependentService {
 	private DependentRepository dependentRepo;
 	
 	// Create
-	public boolean addNewDependent(Enrollee enrollee, String name, LocalDate birthDate) {
-		
-		dependentRepo.save(new Dependent(name, birthDate, enrollee));
+	public boolean addNewDependent(Enrollee enrollee, String name, String birthDate) {
+		dependentRepo.save(new Dependent(name, LocalDate.parse(birthDate), enrollee));
 		
 		return true;
 	}
