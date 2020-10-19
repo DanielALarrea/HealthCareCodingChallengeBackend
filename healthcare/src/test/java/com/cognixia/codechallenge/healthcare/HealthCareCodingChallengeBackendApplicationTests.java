@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.cognixia.codechallenge.healthcare.controller.HealthCareController;
 import com.cognixia.codechallenge.healthcare.model.Dependent;
 import com.cognixia.codechallenge.healthcare.model.Enrollee;
+import com.cognixia.codechallenge.healthcare.repository.DependentRepository;
+import com.cognixia.codechallenge.healthcare.repository.EnrolleeRepository;
 import com.cognixia.codechallenge.healthcare.utility.ErrorUtil;
 
 @SpringBootTest
@@ -22,6 +24,12 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	// Controllers
 	@Autowired
 	private HealthCareController healthCareController;
+	
+	@Autowired
+	private EnrolleeRepository enrolleeRepo;
+	
+	@Autowired
+	private DependentRepository dependentRepo;
 	
 	@Test
 	void testEnrolleeConstructorDefault() {
@@ -123,7 +131,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	}
 	
 	@Test
-	void testUpdateEnrolleBirthDate_Fail_IdNotFound() {
+	void testUpdateEnrolleeBirthDate_Fail_IdNotFound() {
 		String errorMessage = ErrorUtil.errorUpdatingEnrollee() + ErrorUtil.errorIdNotFound();
 		String controllerResponse = healthCareController.updateEnrolleeBirthDate(-1, "1997-05-12").getBody();
 		
@@ -134,6 +142,21 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	void testUpdateEnrolleeBirthDate_Fail_BadDate() {		
 		String errorMessage = ErrorUtil.errorUpdatingEnrollee() + ErrorUtil.errorBadDate();
 		String controllerResponse = healthCareController.updateEnrolleeBirthDate(2, "wewe").getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
+	}
+	
+	@Test
+	void testDeleteEnrollee() {
+		healthCareController.addNewEnrollee("Test Delete", true, "2020-03-12", Optional.empty());
+		
+		healthCareController.deleteEnrollee(enrolleeRepo.findLargestEnrolleeId().getEnrolleeId());
+	}
+	
+	@Test
+	void testDeleteEnrollee_Fail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorDeletingEnrollee() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.deleteEnrollee(-1).getBody();
 		
 		assertThat(errorMessage.equals(controllerResponse));
 	}
@@ -221,6 +244,21 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	void testUpdateDependentBirthDate_Fail_BadDate() {
 		String errorMessage = ErrorUtil.errorUpdatingDependent() + ErrorUtil.errorBadDate();
 		String controllerResponse = healthCareController.updateDependentBirthDate(1, "wewe").getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
+	}
+	
+	@Test
+	void testDeleteDependent() {
+		healthCareController.addNewDependent("Test Delete", "2020-03-12", 2);
+		
+		healthCareController.deleteDependent(dependentRepo.findLargestDependentId().getDependentId());
+	}
+	
+	@Test
+	void testDeleteDependent_Fail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorDeletingDependent() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.deleteDependent(-1).getBody();
 		
 		assertThat(errorMessage.equals(controllerResponse));
 	}

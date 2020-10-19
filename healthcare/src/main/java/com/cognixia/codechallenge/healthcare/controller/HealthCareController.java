@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -122,7 +123,7 @@ public class HealthCareController {
 		try{
 			enrolleeService.deleteEnrollee(id);
 			return new ResponseEntity<String>(SuccessUtil.deletedEnrollee(), HttpStatus.OK);
-		} catch (NoSuchElementException nsee) {
+		} catch (EmptyResultDataAccessException erdae) {
 			return new ResponseEntity<String>(ErrorUtil.errorDeletingEnrollee() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -183,7 +184,7 @@ public class HealthCareController {
 		try {
 			LocalDate.parse(birthDate);
 			dependentService.updateDependentBirthDate(id, birthDate);
-			return new ResponseEntity<String>(SuccessUtil.createdDependent(), HttpStatus.CREATED);
+			return new ResponseEntity<String>(SuccessUtil.updatedDependentBirthDate(), HttpStatus.CREATED);
 		} catch (NoSuchElementException nsee) {
 			return new ResponseEntity<String>(ErrorUtil.errorUpdatingDependent() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
 		}  catch (DateTimeParseException dtpe) {
@@ -196,7 +197,7 @@ public class HealthCareController {
 		try {
 			dependentService.deleteDependent(id);
 			return new ResponseEntity<String>(SuccessUtil.deletedDependent(), HttpStatus.OK);
-		} catch (NoSuchElementException nsee) {
+		} catch (EmptyResultDataAccessException erdae) {
 			return new ResponseEntity<String>(ErrorUtil.errorDeletingDependent() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
 		}
 	}
