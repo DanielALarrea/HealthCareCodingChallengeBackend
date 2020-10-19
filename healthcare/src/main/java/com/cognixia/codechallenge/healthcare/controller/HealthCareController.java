@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,7 @@ import com.cognixia.codechallenge.healthcare.utility.ErrorUtil;
 import com.cognixia.codechallenge.healthcare.utility.SuccessUtil;
 
 @RestController
+@RequestMapping("/healthcare")
 public class HealthCareController {
 
 	@Autowired
@@ -35,11 +37,11 @@ public class HealthCareController {
 	private DependentService dependentService;
 	
 	// Enrollee methods
-	@GetMapping("/enrollees/{id}")
-	public ResponseEntity<Enrollee> getEnrolleeById(@PathVariable Integer id) {
+	@GetMapping("/enrollees")
+	public ResponseEntity<Enrollee> getEnrolleeById(@RequestParam String id) {
 		try {
-			return new ResponseEntity<Enrollee>(enrolleeService.getEnrolleeById(id), HttpStatus.OK);
-		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<Enrollee>(enrolleeService.getEnrolleeById(Integer.parseInt(id)), HttpStatus.OK);
+		} catch (NoSuchElementException | NumberFormatException ex) {
 			return new ResponseEntity<Enrollee>(new Enrollee(), HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -129,11 +131,11 @@ public class HealthCareController {
 	}
 
 	// Dependent methods
-	@GetMapping("/dependents/{id}")
-	public ResponseEntity<Dependent> getDependentById(@PathVariable Integer id) {
+	@GetMapping("/dependents")
+	public ResponseEntity<Dependent> getDependentById(@RequestParam String id) {
 		try {
-			return new ResponseEntity<Dependent>(dependentService.getDependentById(id), HttpStatus.OK);
-		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<Dependent>(dependentService.getDependentById(Integer.parseInt(id)), HttpStatus.OK);
+		} catch (NoSuchElementException | NumberFormatException ex) {
 			return new ResponseEntity<Dependent>(new Dependent(), HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -143,11 +145,11 @@ public class HealthCareController {
 		return dependentService.getAllDependents();
 	}
 	
-	@GetMapping("/dependents/all/{id}")
-	public List<Dependent> getAllDependentsByEnrolleeId(@PathVariable Integer id) {
+	@GetMapping("/dependents/all/enrollee")
+	public List<Dependent> getAllDependentsByEnrolleeId(@RequestParam String id) {
 		try {
-			return dependentService.getAllDependentsByEnrollee(id);
-		} catch (NoSuchElementException nsee) {
+			return dependentService.getAllDependentsByEnrollee(Integer.parseInt(id));
+		} catch (NoSuchElementException | NumberFormatException ex) {
 			return new ArrayList<Dependent>();
 		}
 	}
