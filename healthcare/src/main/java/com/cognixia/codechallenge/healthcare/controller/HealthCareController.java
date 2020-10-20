@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,9 +37,9 @@ public class HealthCareController {
 	
 	// Enrollee methods
 	@GetMapping("/enrollees")
-	public ResponseEntity<Enrollee> getEnrolleeById(@RequestParam String id) {
+	public ResponseEntity<Enrollee> getEnrolleeById(@RequestParam Integer id) {
 		try {
-			return new ResponseEntity<Enrollee>(enrolleeService.getEnrolleeById(Integer.parseInt(id)), HttpStatus.OK);
+			return new ResponseEntity<Enrollee>(enrolleeService.getEnrolleeById(id), HttpStatus.OK);
 		} catch (NoSuchElementException | NumberFormatException ex) {
 			return new ResponseEntity<Enrollee>(new Enrollee(), HttpStatus.BAD_REQUEST);
 		}
@@ -132,9 +131,9 @@ public class HealthCareController {
 
 	// Dependent methods
 	@GetMapping("/dependents")
-	public ResponseEntity<Dependent> getDependentById(@RequestParam String id) {
+	public ResponseEntity<Dependent> getDependentById(@RequestParam Integer id) {
 		try {
-			return new ResponseEntity<Dependent>(dependentService.getDependentById(Integer.parseInt(id)), HttpStatus.OK);
+			return new ResponseEntity<Dependent>(dependentService.getDependentById(id), HttpStatus.OK);
 		} catch (NoSuchElementException | NumberFormatException ex) {
 			return new ResponseEntity<Dependent>(new Dependent(), HttpStatus.BAD_REQUEST);
 		}
@@ -146,9 +145,9 @@ public class HealthCareController {
 	}
 	
 	@GetMapping("/dependents/all/enrollee")
-	public List<Dependent> getAllDependentsByEnrolleeId(@RequestParam String id) {
+	public List<Dependent> getAllDependentsByEnrolleeId(@RequestParam Integer id) {
 		try {
-			return dependentService.getAllDependentsByEnrollee(Integer.parseInt(id));
+			return dependentService.getAllDependentsByEnrollee(id);
 		} catch (NoSuchElementException | NumberFormatException ex) {
 			return new ArrayList<Dependent>();
 		}

@@ -49,12 +49,12 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	@Test
 	void testGetEnrolleeById() {
 		// Requires connection to database with enrollee with ID of 2
-		healthCareController.getEnrolleeById("2");
+		healthCareController.getEnrolleeById(2);
 	}
 	
 	@Test
 	void testGetEnrolleeById_Fail_IdNotFound() {
-		Enrollee controllerResponse = healthCareController.getEnrolleeById("-1").getBody();
+		Enrollee controllerResponse = healthCareController.getEnrolleeById(-1).getBody();
 		
 		assertThat(controllerResponse.getEnrolleeName() == null);
 	}
@@ -164,12 +164,12 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	@Test
 	void testGetDependentById() {
 		// Requires connection to database with dependent with ID of 1
-		healthCareController.getDependentById("1");
+		healthCareController.getDependentById(1);
 	}
 	
 	@Test
 	void testGetDependentById_Fail() {		
-		Dependent controllerResponse = healthCareController.getDependentById("-1").getBody();
+		Dependent controllerResponse = healthCareController.getDependentById(-1).getBody();
 		
 		assertThat(controllerResponse.getDependentName() == null);
 	}
@@ -181,12 +181,12 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testGetAllDependentsByEnrolleeId() {
-		healthCareController.getAllDependentsByEnrolleeId("2");
+		healthCareController.getAllDependentsByEnrolleeId(2);
 	}
 	
 	@Test
 	void estGetAllDependentsByEnrolleeId_Fail_IdNotFound() {
-		List<Dependent> dependents = healthCareController.getAllDependentsByEnrolleeId("-1");
+		List<Dependent> dependents = healthCareController.getAllDependentsByEnrolleeId(-1);
 		
 		assertThrows(IndexOutOfBoundsException.class, () -> {
 			dependents.get(0);
