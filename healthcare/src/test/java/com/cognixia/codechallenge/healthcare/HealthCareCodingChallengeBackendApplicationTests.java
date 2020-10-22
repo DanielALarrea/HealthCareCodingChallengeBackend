@@ -31,9 +31,13 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	@Autowired
 	private DependentRepository dependentRepo;
 	
+	private Integer testEnrolleeId = 2;
+	
+	private Integer testDependentId = 1;
+	
 	@Test
 	void testEnrolleeConstructorDefault() {
-			new Enrollee();
+		new Enrollee();
 	}
 	
 	@Test
@@ -49,7 +53,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	@Test
 	void testGetEnrolleeById() {
 		// Requires connection to database with enrollee with ID of 2
-		healthCareController.getEnrolleeById(2);
+		healthCareController.getEnrolleeById(testEnrolleeId);
 	}
 	
 	@Test
@@ -62,6 +66,58 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	@Test
 	void testGetAllEnrollees() {
 		healthCareController.getAllEnrollees();
+	}
+	
+	@Test
+	void testGetEnrolleeName() {
+		healthCareController.getEnrolleeName(testEnrolleeId);
+	}
+	
+	@Test
+	void testGetEnrolleeName_Fail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.getEnrolleeName(-1).getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
+	}
+	
+	@Test
+	void testGetEnrolleePhoneNumber() {
+		healthCareController.getEnrolleePhoneNumber(testEnrolleeId);
+	}
+	
+	@Test
+	void testGetEnrolleePhoneNumber_Fail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.getEnrolleePhoneNumber(-1).getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
+	}
+	
+	@Test
+	void testGetEnrolleeBirthDate() {
+		healthCareController.getEnrolleeBirthDate(testEnrolleeId);
+	}
+	
+	@Test
+	void testGetEnrolleeBirthDate_Fail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.getEnrolleeBirthDate(-1).getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
+	}
+	
+	@Test
+	void testGetEnrolleeStatus() {
+		healthCareController.getEnrolleeStatus(testEnrolleeId);
+	}
+	
+	@Test
+	void testGetEnrolleeStatus_Fail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.getEnrolleeStatus(-1).getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
 	}
 	
 	@Test
@@ -88,7 +144,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testUpdateEnrolleeName() {
-		healthCareController.updateEnrolleeName(2, "Updated");
+		healthCareController.updateEnrolleeName(testEnrolleeId, "Updated");
 	}
 	
 	@Test
@@ -101,7 +157,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testUpdateEnrolleeStatus() {
-		healthCareController.updateEnrolleeStatus(2, false);
+		healthCareController.updateEnrolleeStatus(testEnrolleeId, false);
 	}
 	
 	@Test
@@ -114,7 +170,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testUpdateEnrolleePhoneNumber() {
-		healthCareController.updateEnrolleePhoneNumber(2, "345-567-8901");
+		healthCareController.updateEnrolleePhoneNumber(testEnrolleeId, "345-567-8901");
 	}
 	
 	@Test
@@ -127,7 +183,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testUpdateEnrolleeBirthDate() {
-		healthCareController.updateEnrolleeBirthDate(2, "1997-05-12");
+		healthCareController.updateEnrolleeBirthDate(testEnrolleeId, "1997-05-12");
 	}
 	
 	@Test
@@ -162,9 +218,19 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	}
 	
 	@Test
+	void testDependentConstructorDefault() {
+		new Dependent();
+	}
+	
+	@Test
+	void testDependentConstructor() {
+		new Dependent("Jory", LocalDate.now(), enrolleeRepo.findLargestEnrolleeId());
+	}
+	
+	@Test
 	void testGetDependentById() {
 		// Requires connection to database with dependent with ID of 1
-		healthCareController.getDependentById(1);
+		healthCareController.getDependentById(testDependentId);
 	}
 	
 	@Test
@@ -181,16 +247,42 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testGetAllDependentsByEnrolleeId() {
-		healthCareController.getAllDependentsByEnrolleeId(2);
+		healthCareController.getAllDependentsByEnrolleeId(testEnrolleeId);
 	}
 	
 	@Test
-	void estGetAllDependentsByEnrolleeId_Fail_IdNotFound() {
+	void testGetAllDependentsByEnrolleeId_Fail_IdNotFound() {
 		List<Dependent> dependents = healthCareController.getAllDependentsByEnrolleeId(-1);
 		
 		assertThrows(IndexOutOfBoundsException.class, () -> {
 			dependents.get(0);
 		});
+	}
+	
+	@Test
+	void testGetDependentName() {
+		healthCareController.getDependentName(testDependentId);
+	}
+	
+	@Test
+	void testGetDependentName_Fail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorReadingDependent() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.getDependentName(-1).getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
+	}
+	
+	@Test
+	void testGetDependentBirthDate() {
+		healthCareController.getDependentBirthDate(testDependentId);
+	}
+	
+	@Test
+	void testGetDependentBirthDateFail_IdNotFound() {
+		String errorMessage = ErrorUtil.errorReadingDependent() + ErrorUtil.errorIdNotFound();
+		String controllerResponse = healthCareController.getDependentBirthDate(-1).getBody();
+		
+		assertThat(errorMessage.equals(controllerResponse));
 	}
 	
 	@Test
@@ -216,7 +308,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testUpdateDependentName() {
-		healthCareController.updateDependentName(1, "Updated");
+		healthCareController.updateDependentName(testDependentId, "Updated");
 	}
 	
 	@Test
@@ -229,7 +321,7 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	
 	@Test
 	void testUpdateDependentBirthDate() {
-		healthCareController.updateDependentBirthDate(1, "1997-05-12");
+		healthCareController.updateDependentBirthDate(testDependentId, "1997-05-12");
 	}
 	
 	@Test
@@ -243,14 +335,14 @@ class HealthCareCodingChallengeBackendApplicationTests {
 	@Test
 	void testUpdateDependentBirthDate_Fail_BadDate() {
 		String errorMessage = ErrorUtil.errorUpdatingDependent() + ErrorUtil.errorBadDate();
-		String controllerResponse = healthCareController.updateDependentBirthDate(1, "wewe").getBody();
+		String controllerResponse = healthCareController.updateDependentBirthDate(testDependentId, "wewe").getBody();
 		
 		assertThat(errorMessage.equals(controllerResponse));
 	}
 	
 	@Test
 	void testDeleteDependent() {
-		healthCareController.addNewDependent("Test Delete", "2020-03-12", 2);
+		healthCareController.addNewDependent("Test Delete", "2020-03-12", testEnrolleeId);
 		
 		healthCareController.deleteDependent(dependentRepo.findLargestDependentId().getDependentId());
 	}

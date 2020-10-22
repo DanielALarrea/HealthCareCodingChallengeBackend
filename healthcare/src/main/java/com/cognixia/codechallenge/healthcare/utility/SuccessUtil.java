@@ -43,5 +43,10 @@ public class SuccessUtil {
 	public static String deletedDependent() {
 		return "Deleted dependent";
 	}
+	
+	// Extra information
+	public static String createdId(Integer id) {
+		return ", their ID is: " + id;
+	}
 
 }

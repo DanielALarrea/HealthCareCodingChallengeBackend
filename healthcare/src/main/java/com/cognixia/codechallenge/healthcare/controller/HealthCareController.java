@@ -13,14 +13,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cognixia.codechallenge.healthcare.model.Dependent;
 import com.cognixia.codechallenge.healthcare.model.Enrollee;
+import com.cognixia.codechallenge.healthcare.repository.EnrolleeRepository;
 import com.cognixia.codechallenge.healthcare.service.DependentService;
 import com.cognixia.codechallenge.healthcare.service.EnrolleeService;
 import com.cognixia.codechallenge.healthcare.utility.ErrorUtil;
@@ -36,8 +39,8 @@ public class HealthCareController {
 	private DependentService dependentService;
 	
 	// Enrollee methods
-	@GetMapping("/enrollees")
-	public ResponseEntity<Enrollee> getEnrolleeById(@RequestParam Integer id) {
+	@GetMapping("/enrollees/{id}")
+	public ResponseEntity<Enrollee> getEnrolleeById(@PathVariable Integer id) {
 		try {
 			return new ResponseEntity<Enrollee>(enrolleeService.getEnrolleeById(id), HttpStatus.OK);
 		} catch (NoSuchElementException | NumberFormatException ex) {
@@ -50,11 +53,47 @@ public class HealthCareController {
 		return enrolleeService.getAllEnrollees();
 	}
 	
-	@PostMapping("/enrollees/new")
+	@GetMapping("/enrollees/{id}/name") 
+	public ResponseEntity<String> getEnrolleeName(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<String>(enrolleeService.getEnrolleeById(id).getEnrolleeName(), HttpStatus.OK);
+		} catch (NoSuchElementException | NumberFormatException ex) {
+			return new ResponseEntity<String>(ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/enrollees/{id}/phone-number") 
+	public ResponseEntity<String> getEnrolleePhoneNumber(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<String>(enrolleeService.getEnrolleeById(id).getPhoneNumber(), HttpStatus.OK);
+		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<String>(ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/enrollees/{id}/status") 
+	public ResponseEntity<String> getEnrolleeStatus(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<String>(enrolleeService.getEnrolleeById(id).getActivationStatus().toString(), HttpStatus.OK);
+		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<String>(ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/enrollees/{id}/birth-date") 
+	public ResponseEntity<String> getEnrolleeBirthDate(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<String>(enrolleeService.getEnrolleeById(id).getEnrolleeBirthDate().toString(), HttpStatus.OK);
+		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<String>(ErrorUtil.errorReadingEnrollee() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping("/enrollees")
 	public ResponseEntity<String> addNewEnrollee(@RequestParam String name, 
-												@RequestParam boolean activationStatus, 
-												@RequestParam String birthDate,
-												@RequestParam Optional<String> phoneNumber) {
+												 @RequestParam boolean activationStatus, 
+												 @RequestParam String birthDate,
+												 @RequestParam Optional<String> phoneNumber) {
 		String phoneNumberOptional = "";
 		try {
 			phoneNumberOptional = phoneNumber.get();
@@ -66,15 +105,15 @@ public class HealthCareController {
 		try {
 			LocalDate.parse(birthDate);
 			enrolleeService.addNewEnrollee(name, phoneNumberOptional, activationStatus, birthDate);
-			return new ResponseEntity<String>(SuccessUtil.createdEnrollee(), HttpStatus.CREATED);
+			return new ResponseEntity<String>(SuccessUtil.createdEnrollee() + SuccessUtil.createdId(enrolleeService.getLatestEnrolleeId()), HttpStatus.CREATED);
 		} catch (DateTimeParseException dtpe) {
 			return new ResponseEntity<String>(ErrorUtil.errorCreatingEnrollee() + ErrorUtil.errorBadDate(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	@PutMapping("/enrollees/update/name")
-	public ResponseEntity<String> updateEnrolleeName(@RequestParam Integer id, 
-													 @RequestParam String name) {
+	@PutMapping("/enrollees/{id}/name")
+	public ResponseEntity<String> updateEnrolleeName(@PathVariable Integer id, 
+													 @RequestBody String name) {
 		try {
 			enrolleeService.updateEnrolleeName(id, name);
 			return new ResponseEntity<String>(SuccessUtil.updatedEnrolleeName(), HttpStatus.OK);
@@ -83,9 +122,9 @@ public class HealthCareController {
 		}
 	}
 	
-	@PutMapping("/enrollees/update/phonenumber")
-	public ResponseEntity<String> updateEnrolleePhoneNumber(@RequestParam Integer id, 
-															@RequestParam String phoneNumber) {
+	@PutMapping("/enrollees/{id}/phone-number")
+	public ResponseEntity<String> updateEnrolleePhoneNumber(@PathVariable Integer id, 
+															@RequestBody String phoneNumber) {
 		try {
 			enrolleeService.updateEnrolleePhoneNumber(id, phoneNumber);
 			return new ResponseEntity<String>(SuccessUtil.updatedEnrolleePhoneNumber(), HttpStatus.OK);
@@ -94,9 +133,9 @@ public class HealthCareController {
 		}
 	}
 	
-	@PutMapping("/enrollees/update/status")
-	public ResponseEntity<String> updateEnrolleeStatus(@RequestParam Integer id, 
-													   @RequestParam boolean status) {
+	@PutMapping("/enrollees/{id}/status")
+	public ResponseEntity<String> updateEnrolleeStatus(@PathVariable Integer id, 
+													   @RequestBody boolean status) {
 		try {
 			enrolleeService.updateEnrolleeStatus(id, status);
 			return new ResponseEntity<String>(SuccessUtil.updatedEnrolleeStatus(), HttpStatus.OK);
@@ -105,9 +144,9 @@ public class HealthCareController {
 		}
 	}
 	
-	@PutMapping("/enrollees/update/birthdate")
-	public ResponseEntity<String> updateEnrolleeBirthDate(@RequestParam Integer id, 
-														  @RequestParam String birthDate) {
+	@PutMapping("/enrollees/{id}/birth-date")
+	public ResponseEntity<String> updateEnrolleeBirthDate(@PathVariable Integer id, 
+														  @RequestBody String birthDate) {
 		try {
 			LocalDate.parse(birthDate);
 			enrolleeService.updateEnrolleeBirthDate(id, birthDate);
@@ -119,8 +158,8 @@ public class HealthCareController {
 		}
 	}
 	
-	@DeleteMapping("/enrollees/delete")
-	public ResponseEntity<String> deleteEnrollee(@RequestParam Integer id) {
+	@DeleteMapping("/enrollees/{id}")
+	public ResponseEntity<String> deleteEnrollee(@PathVariable Integer id) {
 		try{
 			enrolleeService.deleteEnrollee(id);
 			return new ResponseEntity<String>(SuccessUtil.deletedEnrollee(), HttpStatus.OK);
@@ -128,10 +167,19 @@ public class HealthCareController {
 			return new ResponseEntity<String>(ErrorUtil.errorDeletingEnrollee() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping("/enrollees/{id}/dependents")
+	public List<Dependent> getAllDependentsByEnrolleeId(@PathVariable Integer id) {
+		try {
+			return dependentService.getAllDependentsByEnrollee(id);
+		} catch (NoSuchElementException | NumberFormatException ex) {
+			return new ArrayList<Dependent>();
+		}
+	}
 
 	// Dependent methods
-	@GetMapping("/dependents")
-	public ResponseEntity<Dependent> getDependentById(@RequestParam Integer id) {
+	@GetMapping("/dependents/{id}")
+	public ResponseEntity<Dependent> getDependentById(@PathVariable Integer id) {
 		try {
 			return new ResponseEntity<Dependent>(dependentService.getDependentById(id), HttpStatus.OK);
 		} catch (NoSuchElementException | NumberFormatException ex) {
@@ -144,23 +192,51 @@ public class HealthCareController {
 		return dependentService.getAllDependents();
 	}
 	
-	@GetMapping("/dependents/all/enrollee")
-	public List<Dependent> getAllDependentsByEnrolleeId(@RequestParam Integer id) {
+	@GetMapping("/dependents/{id}/name") 
+	public ResponseEntity<String> getDependentName(@PathVariable Integer id) {
 		try {
-			return dependentService.getAllDependentsByEnrollee(id);
+			return new ResponseEntity<String>(dependentService.getDependentById(id).getDependentName(), HttpStatus.OK);
 		} catch (NoSuchElementException | NumberFormatException ex) {
-			return new ArrayList<Dependent>();
+			return new ResponseEntity<String>(ErrorUtil.errorReadingDependent(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	@PostMapping("/dependents/new")
+	@GetMapping("/dependents/{id}/birth-date") 
+	public ResponseEntity<String> getDependentBirthDate(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<String>(dependentService.getDependentById(id).getDependentBirthDate().toString(), HttpStatus.OK);
+		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<String>(ErrorUtil.errorReadingDependent() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/dependents/{id}/enrollee") 
+	public ResponseEntity<String> getDependentEnrollee(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<String>(dependentService.getDependentById(id).getEnrollee().toString(), HttpStatus.OK);
+		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<String>(ErrorUtil.errorReadingDependent() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/dependents/{id}/enrollee-id") 
+	public ResponseEntity<String> getDependentEnrolleeId(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<String>(dependentService.getDependentById(id).getEnrollee().getEnrolleeId().toString(), HttpStatus.OK);
+		} catch (NoSuchElementException nsee) {
+			return new ResponseEntity<String>(ErrorUtil.errorReadingDependent() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	
+	@PostMapping("/dependents")
 	public ResponseEntity<String> addNewDependent(@RequestParam String name, 
 												  @RequestParam String birthDate,
 												  @RequestParam Integer enrolleeId) {
 		try {
 			LocalDate.parse(birthDate);
 			dependentService.addNewDependent(enrolleeService.getEnrolleeById(enrolleeId), name, birthDate);
-			return new ResponseEntity<String>(SuccessUtil.createdDependent(), HttpStatus.CREATED);
+			return new ResponseEntity<String>(SuccessUtil.createdDependent() + SuccessUtil.createdId(dependentService.getLatestDependentId()), HttpStatus.CREATED);
 		} catch (NoSuchElementException nsee) {
 			return new ResponseEntity<String>(ErrorUtil.errorCreatingDependent() + ErrorUtil.errorIdNotFound(), HttpStatus.BAD_REQUEST);
 		}  catch (DateTimeParseException dtpe) {
@@ -168,9 +244,9 @@ public class HealthCareController {
 		}
 	}
 	
-	@PutMapping("/dependents/update/name")
-	public ResponseEntity<String> updateDependentName(@RequestParam Integer id, 
-													  @RequestParam String name) {
+	@PutMapping("/dependents/{id}/name")
+	public ResponseEntity<String> updateDependentName(@PathVariable Integer id, 
+													  @RequestBody String name) {
 		try {
 			dependentService.updateDependentName(id, name);
 			return new ResponseEntity<String>(SuccessUtil.updatedDependentName(), HttpStatus.OK);
@@ -179,9 +255,9 @@ public class HealthCareController {
 		}
 	}
 	
-	@PutMapping("/dependents/update/birthdate")
-	public ResponseEntity<String> updateDependentBirthDate(@RequestParam Integer id, 
-			   											   @RequestParam String birthDate) {
+	@PutMapping("/dependents/{id}/birth-date")
+	public ResponseEntity<String> updateDependentBirthDate(@PathVariable Integer id, 
+			   											   @RequestBody String birthDate) {
 		try {
 			LocalDate.parse(birthDate);
 			dependentService.updateDependentBirthDate(id, birthDate);
@@ -193,8 +269,8 @@ public class HealthCareController {
 		}
 	}
 	
-	@DeleteMapping("/dependents/delete")
-	public ResponseEntity<String> deleteDependent(@RequestParam Integer id) {
+	@DeleteMapping("/dependents/{id}")
+	public ResponseEntity<String> deleteDependent(@PathVariable Integer id) {
 		try {
 			dependentService.deleteDependent(id);
 			return new ResponseEntity<String>(SuccessUtil.deletedDependent(), HttpStatus.OK);

@@ -23,6 +23,12 @@ public class DependentService {
 		return true;
 	}
 	
+	public boolean addNewDependent(Dependent dependent) {
+		dependentRepo.save(dependent);
+		
+		return true;
+	}
+	
 	// Read
 	public Dependent getDependentById(Integer id) {
 		return dependentRepo.findById(id).get();
@@ -35,6 +41,14 @@ public class DependentService {
 	public List<Dependent> getAllDependentsByEnrollee(Integer enrolleeId) {
 		return dependentRepo.findAllByEnrolleeEnrolleeId(enrolleeId);
 		
+	}
+	
+	public Dependent getLatestDependent() {
+		return dependentRepo.findLargestDependentId();
+	}
+	
+	public Integer getLatestDependentId() {
+		return dependentRepo.findLargestDependentId().getDependentId();
 	}
 	
 	// Update

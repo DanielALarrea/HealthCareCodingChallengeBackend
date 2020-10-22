@@ -26,6 +26,12 @@ public class EnrolleeService {
 		return true;
 	}
 	
+	public boolean addNewEnrollee(Enrollee enrollee) {
+		enrolleeRepo.save(enrollee);
+		
+		return true;
+	}
+	
 	// Read
 	public Enrollee getEnrolleeById(Integer id) {
 		return enrolleeRepo.findById(id).get();
@@ -33,6 +39,14 @@ public class EnrolleeService {
 	
 	public List<Enrollee> getAllEnrollees() {
 		return enrolleeRepo.findAll();
+	}
+	
+	public Enrollee getLatestEnrollee() {
+		return enrolleeRepo.findLargestEnrolleeId();
+	}
+	
+	public Integer getLatestEnrolleeId() {
+		return enrolleeRepo.findLargestEnrolleeId().getEnrolleeId();
 	}
 	
 	// Update
